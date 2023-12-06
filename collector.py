@@ -39,6 +39,7 @@ class Collector:
 
     import math
 
+    # TODO: take cumulative PNL
     def calculate_mean():
         # Create a filtered version of the 'pnl' column with only numeric values
         numeric_pnl = pd.to_numeric(self.pnls, errors="coerce")
@@ -46,11 +47,11 @@ class Collector:
         return numeric_pnl.mean()
 
     def calculate_stddev():
-        numeric_pnl = pd.to_numeric(model.pnls, errors="coerce")
+        numeric_pnl = pd.to_numeric(self.pnls, errors="coerce")
         return numeric_pnl.std(ddof=0)
 
     def calculate_final_pnl():
-        numeric_pnl = pd.to_numeric(model.pnls, errors="coerce")
+        numeric_pnl = pd.to_numeric(self.pnls, errors="coerce")
         return numeric_pnl.sum()
 
     def calculate_sharpe_ratio():
