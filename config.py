@@ -14,7 +14,7 @@ from sklearn.cross_decomposition import PLSRegression
 DATASETS_DIRECTORY = "datasets"
 CURRENCY_DIRECTORY = "cop"
 DATASET_FILENAME = "all_data.csv"
-OUTPUT_DIRECTORY = "output2"
+OUTPUT_DIRECTORY = "output"
 TARGET_FEATURE = "USDCOP Curncy"
 FORWARD_POINT_FEATURE = "CLN1W BGN Curncy"
 TARGET = "Target"

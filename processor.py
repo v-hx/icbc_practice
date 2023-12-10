@@ -16,8 +16,6 @@ from config import (
     ROUND_DECIMALS,
 )
 
-pd.options.mode.chained_assignment = None
-
 
 class Processor:
     def __init__(self, data):
