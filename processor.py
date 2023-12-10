@@ -5,7 +5,16 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, minmax_scale
 
-from config import FEATURES, TARGET_FEATURE, TARGET, TARGET_RANGE_MIN, TARGET_RANGE_MAX
+from config import (
+    FEATURES,
+    TARGET_FEATURE,
+    FORWARD_POINT_FEATURE,
+    FORWARD_POINT_DIVIDER,
+    TARGET,
+    TARGET_RANGE_MIN,
+    TARGET_RANGE_MAX,
+    ROUND_DECIMALS,
+)
 
 pd.options.mode.chained_assignment = None
 
@@ -16,7 +25,7 @@ class Processor:
         self.X_train = None
         self.y_train = None
 
-    # pearson, kendall, spearman = get_correlated_features('pearson')
+    # Possible values: pearson, kendall, spearman
     def get_correlated_features(self, method="pearson", threshold=0.95):
         # Create correlation matrix
         corr_matrix = self.data[FEATURES].corr(method=method, numeric_only=True).abs()
@@ -25,52 +34,44 @@ class Processor:
         # Find features with correlation greater than threshold
         return [column for column in upper.columns if any(upper[column] > threshold)]
 
-    # Date object -> datetime format
     def to_datetime(self, feature="Date"):
         self.data[feature] = pd.to_datetime(self.data[feature])
 
-    # 1. Keep rows with present target
-    def get_with_targer(self):
-        self.data = self.data[self.data[TARGET_FEATURE].notna()]
-
-    def fill_with_previous(self):
-        # 2. Fill empty values from previous rows
-        self.data.ffill(inplace=True)
-        # 3. Remove rows with NaN (meanin that there were no previous values for some rows)
+    def dropna(self):
         self.data.dropna(how="any", inplace=True)
 
-    # 'BCN1W BGN Curncy'
-    def drop_features(self, features):
-        # Drop BCN1W BGN Curncy
-        self.data.drop(features, axis=1, inplace=True)
+    def ffill(self, columns):
+        self.data.loc[:, columns] = self.data.loc[:, columns].ffill()
 
-    # float64 dtype -> float32
     def from_float64_to_float32(self):
         float64_cols = list(self.data.select_dtypes(include="float64"))
         self.data[float64_cols] = self.data[float64_cols].astype("float32")
 
-    # Change is always NaN for the first row, removing
-    # data = data.iloc[1:]
     def create_change_feature(self):
         self.data["Change"] = (
-            self.data[TARGET_FEATURE].shift() - self.data[TARGET_FEATURE]
-        ) / self.data[TARGET_FEATURE]
-        # Change is always NaN for the first row, removing
-        self.data = self.data.iloc[1:]
+            (
+                self.data[TARGET_FEATURE].shift(-1)
+                - (
+                    self.data[TARGET_FEATURE]
+                    + self.data[TARGET_FEATURE]
+                    / FORWARD_POINT_DIVIDER
+                    / TARGET_RANGE_MAX
+                )
+            )
+            / self.data[TARGET_FEATURE]
+        ).round(ROUND_DECIMALS)
 
     def create_target(self):
-        # Creating target and normalize it
         self.data[TARGET] = minmax_scale(
             self.data["Change"], feature_range=(TARGET_RANGE_MIN, TARGET_RANGE_MAX)
         ).round()
 
     def preprocess(self):
         correlated_features = self.get_correlated_features()
-        self.drop_features(correlated_features)
         features = [
             feature for feature in FEATURES if feature not in correlated_features
         ]
-        X = self.data[features] 
+        X = self.data[features]
         y = self.data[TARGET]
         numerical_features = X.select_dtypes(include=["float32"]).columns
         numerical_transformer = StandardScaler()
@@ -85,9 +86,10 @@ class Processor:
 
     def do_process(self):
         self.to_datetime()
-        self.get_with_targer()
-        self.fill_with_previous()
+        self.ffill([TARGET_FEATURE, FORWARD_POINT_FEATURE])
+        self.dropna()
         self.from_float64_to_float32()
         self.create_change_feature()
+        self.ffill(["Change"])
         self.create_target()
         self.preprocess()

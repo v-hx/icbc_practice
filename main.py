@@ -4,11 +4,13 @@ import pandas as pd
 from collector import Collector
 from processor import Processor
 from regressor import Regressor
-from config import DATASETS_DIRECTORY, DATASET_FILENAME, MODELS, OUTPUT_DIRECTORY
+from config import DATASETS_DIRECTORY, CURRENCY_DIRECTORY, DATASET_FILENAME, MODELS
 
 
 def main():
-    filepath = os.path.join(os.getcwd(), DATASETS_DIRECTORY, DATASET_FILENAME)
+    filepath = os.path.join(
+        os.getcwd(), DATASETS_DIRECTORY, CURRENCY_DIRECTORY, DATASET_FILENAME
+    )
     raw_data = pd.read_csv(filepath, delimiter=",")
 
     processor = Processor(raw_data)
@@ -25,12 +27,12 @@ def main():
 
         collector = Collector(model_obj.__class__.__name__)
 
-        model = Regressor(data, model_obj, model_params, X_train, y_train)
-        model.train(collector)
+        model = Regressor(data, collector, model_obj, model_params, X_train, y_train)
+        model.train()
 
         collector.wrive_csv()
-        collector.draw_line_chart()
         collector.draw_cumulative_pnl_chart()
+        collector.calculate_sharpe_ratio()
 
 
 if __name__ == "__main__":

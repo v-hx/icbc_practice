@@ -7,15 +7,16 @@ from sklearn.ensemble import (
     GradientBoostingRegressor,
     AdaBoostRegressor,
 )
-from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
-from catboost import CatBoostRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.cross_decomposition import PLSRegression
 
 DATASETS_DIRECTORY = "datasets"
-DATASET_FILENAME = "data.csv"
-OUTPUT_DIRECTORY = "output"
-
-TARGET_FEATURE = "USDBRL Curncy"
+CURRENCY_DIRECTORY = "cop"
+DATASET_FILENAME = "all_data.csv"
+OUTPUT_DIRECTORY = "output2"
+TARGET_FEATURE = "USDCOP Curncy"
+FORWARD_POINT_FEATURE = "CLN1W BGN Curncy"
 TARGET = "Target"
 FEATURES = [
     "Date",
@@ -23,23 +24,22 @@ FEATURES = [
     "GBPUSD Curncy",
     "USDJPY Curncy",
     "USDMXN Curncy",
-    "USOSFR2 Curncy",
-    "USOSFR10 Curncy",
+    "USGG2YR Index",
+    "USGG10YR Index",
     "CO1 Comdty",
     "CU1 Comdty",
     "XAU Curncy",
-    "BCNI3M Curncy",
+    "CLNI3M Curncy",
     "VIX Index",
     "ES1 Index",
     "NQ1 Index",
-    "IBOV Index",
+    "COLCAP Index",
     "DXY Curncy",
-    "BRAZIL CDS USD SR 5Y D14 Corp",
-    "MEX CDS USD SR 5Y D14 Corp",
+    "COLOM CDS USD SR 5Y D14 Corp",
     "EURUSDV1M BGN Curncy",
     "W 1 COMB Comdty",
     "C 1 COMB Comdty",
-    "KC1 Comdty",
+    "KC1 COMB Comdty",
     "USGGBE2 Index",
     "USGGBE10 Index",
     "CESIUSD Index",
@@ -49,6 +49,10 @@ ROLLING_WINDOW = 30
 
 TARGET_RANGE_MIN = -5
 TARGET_RANGE_MAX = 5
+
+ROUND_DECIMALS = 5
+
+FORWARD_POINT_DIVIDER = 10000
 
 MODELS = [
     {LinearRegression: {"fit_intercept": [True, False]}},
@@ -94,20 +98,17 @@ MODELS = [
         }
     },
     {
-        LGBMRegressor: {
-            "n_estimators": [100, 200, 300],
-            "learning_rate": [0.1, 0.01, 0.001],
-            "max_depth": [3, 5, 10],
+        PLSRegression: {
+            "n_components": [5, 10, 20],
+            "scale": [True, False],
+            "max_iter": [500, 1000, 2000],
         }
     },
     {
-        CatBoostRegressor: {
-            "learning_rate": [0.1, 0.01, 0.001],
-            "n_estimators": [50, 100, 200],
-            "max_depth": [3, 5, 10],
-            "subsample": [1.0],
-            "colsample_bylevel": [1.0],
-            "reg_lambda": [3.0],
+        MLPRegressor: {
+            "learning_rate": ["constant", "invscaling", "adaptive"],
+            "learning_rate_init": [0.1, 0.01, 0.001],
+            "max_iter": [500, 1000, 2000],
         }
     },
 ]
