@@ -11,13 +11,21 @@ from xgboost import XGBRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.cross_decomposition import PLSRegression
 
+# Datasets directory path
 DATASETS_DIRECTORY = "datasets"
+# Path to a specific currency directory indide the datasets directory
 CURRENCY_DIRECTORY = "cop"
+# A dataset file name, should exist in DATASETS_DIRECTORY/CURRENCY_DIRECTORY
 DATASET_FILENAME = "all_data.csv"
+# Output directory path where all the output files will be stored
 OUTPUT_DIRECTORY = "output"
+# Original target column name
 TARGET_FEATURE = "USDCOP Curncy"
+# Forward point column name
 FORWARD_POINT_FEATURE = "CLN1W BGN Curncy"
+# Computed target column name. Does not exist in the original dataset.
 TARGET = "Target"
+# List of features, must be adjusted for different currencies
 FEATURES = [
     "Date",
     "EURUSD Curncy",
@@ -45,15 +53,20 @@ FEATURES = [
     "CESIUSD Index",
 ]
 
+# Rolling window size
 ROLLING_WINDOW = 30
 
+# Target normalization range
 TARGET_RANGE_MIN = -5
 TARGET_RANGE_MAX = 5
 
+# Decimals to round different compuited and output values
 ROUND_DECIMALS = 5
 
+# Forward point is equivalent to 1/10000 of a spot rate
 FORWARD_POINT_DIVIDER = 10000
 
+# List of models to train
 MODELS = [
     {LinearRegression: {"fit_intercept": [True, False]}},
     {
