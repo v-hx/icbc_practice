@@ -35,6 +35,9 @@ class Regressor:
         best_model = self.get_best_model(grid_search)
         return best_model.predict(X_predict).round()[0]
 
+    def predict_with_model(self, model, X_predict):
+        return model.predict(X_predict).round()[0]
+
     def train(self):
         range_limit = self.X_train.shape[0] - ROLLING_WINDOW
 
