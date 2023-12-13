@@ -15,8 +15,8 @@ python main.py
 
 ### Run in Docker
 
-docker build . --tag icbc
-docker run -v ${pwd}/output:/usr/src/app/output icbc
+`docker build . --tag icbc`
+`docker run -v ${pwd}/output:/usr/src/app/output icbc`
 
 ### Additional notes
 
