@@ -16,6 +16,7 @@ Simple financial instrument prediction solution using ML regression models.
 ### Run in Docker
 
 `docker build . --tag icbc`
+
 `docker run -v ${pwd}/output:/usr/src/app/output icbc`
 
 ### Additional notes
