@@ -6,12 +6,12 @@ Simple financial instrument prediction solution using ML regression models.
 
 - Tested on Python 3.11
 - Virtual environment, see <https://github.com/pyenv/pyenv>
-- `pip intstall -r requirements.txt
+- `pip intstall -r requirements.txt`
 - See `config.py` and adjust as required
 
 ### Run locally
 
-python main.py
+`python main.py`
 
 ### Run in Docker
 
