@@ -23,4 +23,4 @@ Simple financial instrument prediction solution using ML regression models.
 ### Additional notes
 
 - Depending on your operating system, you might require to manually create the `output` directory on your host when running in Docker.
-- GridSearchCV is time-consuming, you might want to just predict the targetm, once you have trained a model. Use the `Regressor.predict_with_model` method
+- GridSearchCV is time-consuming, you might want to just predict the target, once you have trained a model. Use the `Regressor.predict_with_model` method
